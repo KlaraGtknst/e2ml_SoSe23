@@ -53,6 +53,8 @@ def binary_cross_entropy_loss(y_true, y_pred):
         raise ValueError
 
     # Compute and return the empirical risk.
-    risk = sum(-x[0] * np.log(x[1]) -(1 - x[0]) * np.log(x[1]) for x in zip(y_true, y_pred))*1/len(y_true)
+    nenner = sum(- x[0] * np.log(x[1]) - (1 - x[0]) * np.log(1 - x[1]) for x in zip(y_pred, y_true))
+    print(nenner)
+    risk = nenner/len(y_true)
     print(risk)
     return risk
