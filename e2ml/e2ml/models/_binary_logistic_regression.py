@@ -18,7 +18,7 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
     Parameters
     ----------
     maxiter : int, default=100
-        Maximum number of optimization steps.
+        Maximum number of optimization steps. (number of iterations)
     lmbda: float, default=0.0
         Regularization hyperparameter.
 
@@ -58,10 +58,12 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
         check_consistent_length(X, y)
 
         # Fit `LabelEncoder` object as `self.label_encoder_`.
-        # TODO 
+        self.label_encoder_ = LabelEncoder()
+        self.label_encoder_.fit(y)
 
         # Raise `ValueError` if there are more than two classes.
-        # TODO 
+        if self.label_encoder_.classes_.shape[0] > 2:
+            raise ValueError('There are more than two classes.')
 
         # Transform `self.y_` using the fitted `self.label_encoder_`.
         # TODO 
