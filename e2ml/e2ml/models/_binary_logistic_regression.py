@@ -30,6 +30,7 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
     """
 
     def __init__(self, maxiter=100, lmbda=0.0):
+        self.y_ = None
         self.maxiter = maxiter
         self.lmbda = lmbda
 
@@ -66,10 +67,10 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
             raise ValueError('There are more than two classes.')
 
         # Transform `self.y_` using the fitted `self.label_encoder_`.
-        # TODO 
+        self.y_ = self.label_encoder_.transform(y)
 
         # Initialize weights `w0`.
-        # TODO 
+        w0 = np.zeros((X.shape[1]))
 
         def loss_func(w):
             """
@@ -85,20 +86,22 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
                 Evaluated (scaled) loss.
             """
             # Compute predictions for given weights.
-            # TODO 
+            y_pred = expit(np.matmul(X, w))
 
             # Compute binary cross entropy loss including regularization.
-            # TODO 
-            loss += 0.5 * len(X)**(-1) * self.lmbda * w.T @ w
+            loss = binary_cross_entropy_loss(y_true=y, y_pred=y_pred)
+            loss += 0.5 * len(X)**(-1) * self.lmbda * w.T @ w   # second term
 
             return loss
 
         def gradient_func(w):
             # Compute predictions for given weights.
-            # TODO 
+            y_pred = expit(np.matmul(X, w))
 
             # Compute gradient.
-            # TODO 
+            # y_pred 1 dim vector -> expand dims, or index [:, None] -> 1 dim ndarry to 2 dim ndarray
+            # basis function was supplied to X
+            gradient = 1 * len(X)**(-1) * np.sum((y_pred - y)[:, None] * X)
 
             return gradient
 
@@ -124,10 +127,13 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
         """
         # Check `X` parameter.
         X = check_array(X)
-        self._check_n_features(X, reset=False)
+        self._check_n_features(X, reset=False)  # do we have n features in X?
 
         # Estimate and return conditional class probabilities.
-        # TODO 
+        y_pred = expit(np.matmul(X, self.w_)) # not a matrix -> ndarray; @ is equal to matmul
+        # wrong: P = y_pred.reshape(X.shape[0], X.shape[1])    # column_stack works on tupels, reshape works on ndarray
+        P = np.column_stack(1-y_pred, y_pred)   # two dim matrix: entries for both probabilities -> later provide class (higher prob == class)
+
         return P
 
     def predict(self, X):
@@ -145,9 +151,10 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
             Predicted class labels class.
         """
         # Predict class labels `y`.
-        # TODO 
+        proba = self.predict_proba(X)   # matrix with individual class probabilities for 0 and 1
+        y = proba.argmax(axis=1)        # return index/class with highest value for every row
 
         # Re-transform predicted labels using `self.label_encoder_`.
-        # TODO 
+        y = self.label_encoder_.inverse_transform(y)
 
         return y
