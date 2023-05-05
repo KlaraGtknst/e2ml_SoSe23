@@ -109,7 +109,7 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
         # Use `scipy.optimize.minimize` with `BFGS` as `method` to optimize the loss function and store the result as
         # `self.w_`
         result = minimize(fun=loss_func, x0=w0, jac=gradient_func, method='BFGS', options={'maxiter': self.maxiter})
-        self.w_ = result.w
+        self.w_ = result.x
 
         return self
 
@@ -134,7 +134,7 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
         # Estimate and return conditional class probabilities.
         y_pred = expit(np.matmul(X, self.w_)) # not a matrix -> ndarray; @ is equal to matmul
         # wrong: P = y_pred.reshape(X.shape[0], X.shape[1])    # column_stack works on tupels, reshape works on ndarray
-        P = np.column_stack(1-y_pred, y_pred)   # two dim matrix: entries for both probabilities -> later provide class (higher prob == class)
+        P = np.column_stack((1-y_pred, y_pred))   # two dim matrix: entries for both probabilities -> later provide class (higher prob == class)
 
         return P
 
