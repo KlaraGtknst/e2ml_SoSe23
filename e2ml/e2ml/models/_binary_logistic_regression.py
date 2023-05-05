@@ -102,12 +102,14 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
             # y_pred 1 dim vector -> expand dims, or index [:, None] -> 1 dim ndarry to 2 dim ndarray
             # basis function was supplied to X
             gradient = 1 * len(X)**(-1) * np.sum((y_pred - y)[:, None] * X)
+            gradient += self.lmbda * w  # regularisation term
 
             return gradient
 
         # Use `scipy.optimize.minimize` with `BFGS` as `method` to optimize the loss function and store the result as
         # `self.w_`
-        # TODO 
+        result = minimize(fun=loss_func, x0=w0, jac=gradient_func, method='BFGS', options={'maxiter': self.maxiter})
+        self.w_ = result.w
 
         return self
 
