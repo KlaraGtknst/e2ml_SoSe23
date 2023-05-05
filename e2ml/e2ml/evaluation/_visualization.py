@@ -56,7 +56,7 @@ def plot_decision_boundary(clf, bound, res=21, ax=None, cmap='coolwarm_r',
     mesh_instances = np.array([X_mesh.reshape(-1), Y_mesh.reshape(-1)]).T
 
     # Predict class-membership probabilities for samples of the mesh.
-    # TODO 
+    posteriors = clf.predict_proba(mesh_instances)
     posteriors = posteriors[:, 0].reshape(X_mesh.shape)
 
     # Create contour plot of the posterior probabilities.
