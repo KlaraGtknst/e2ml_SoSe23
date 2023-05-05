@@ -45,8 +45,8 @@ def binary_cross_entropy_loss(y_true, y_pred):
     risk : float in [0, +infinity]
         Empirical risk computed via the BCE loss function.
     """
-    y_true = column_or_1d(y_true, dtype=float)
-    y_pred = column_or_1d(y_pred, dtype=float)
+    y_true = column_or_1d(y_true)
+    y_pred = column_or_1d(y_pred)
 
     # Check value ranges of probabilities and raise ValueError if the ranges are invalid. In this case, it should be
     # allowed to have estimated probabilities in the interval [0, 1] instead of only (0, 1).
