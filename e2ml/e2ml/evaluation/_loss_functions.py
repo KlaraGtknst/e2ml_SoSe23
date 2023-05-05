@@ -25,7 +25,6 @@ def zero_one_loss(y_true, y_pred):
 
     # Compute and return the empirical risk.
     risk = np.mean(y_true != y_pred)
-    # sum((x[0] != x[1])/len(y_true) for x in zip(y_true, y_pred))
     return risk
 
 
@@ -50,12 +49,12 @@ def binary_cross_entropy_loss(y_true, y_pred):
 
     # Check value ranges of probabilities and raise ValueError if the ranges are invalid. In this case, it should be
     # allowed to have estimated probabilities in the interval [0, 1] instead of only (0, 1).
-    if any(i < 0 for i in y_true) or any(i > 1 for i in y_true) or any(i < 0 for i in y_pred) or any(i > 1 for i in y_pred):
-        raise ValueError
+    if not (all(y_true >= 0) & all(y_true <= 1) & all(y_pred >= 0) & all(y_pred <= 1)):
+        raise ValueError('inputs must have values in interval [0,1]')
 
     # Compute and return the empirical risk.
-    nenner = sum(- x[0] * np.log(x[1]) - (1 - x[0]) * np.log(1 - x[1]) for x in zip(y_pred, y_true))
-    print(nenner)
-    risk = nenner/len(y_true)
-    print(risk)
+    # x times logs y computation, stops if x == 0
+    risk = (-xlogy(y_true, y_pred) - xlogy(1-y_true, 1-y_pred)).mean()
+    # smallest possible float (epsilon) to increment used to differentiate if floating point values for alternarive
+
     return risk
