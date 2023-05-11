@@ -83,7 +83,7 @@ class PrincipalComponentAnalysis(BaseEstimator):
 
         Parameters
         ----------
-        X : numpy.ndarray, sahpe (n_samples, n_features)
+        X : numpy.ndarray, shape (n_samples, n_features)
             Samples in the input space.
 
         Returns
