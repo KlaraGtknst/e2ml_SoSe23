@@ -1,4 +1,4 @@
-from ._pca import PCA
+from ._principal_component_analysis import PrincipalComponentAnalysis
 from ._standard_scaler import StandardScaler
 
-__all__ = ['PCA', 'StandardScaler']
+__all__ = ['PrincipalComponentAnalysis', 'StandardScaler']
