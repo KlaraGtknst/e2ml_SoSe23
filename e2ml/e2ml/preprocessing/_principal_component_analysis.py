@@ -62,6 +62,8 @@ class PrincipalComponentAnalysis(BaseEstimator):
         S = ((X - self.mu_).T @ (X - self.mu_)) / n_samples  # <-- SOLUTION
 
         # Compute eigenvalues `self.lmbdas_` and eigenvectors `self.U_`.
+        # symmetric matrix is necessary for eigh, covariance matrix is symmetric
+        # eigh return eigenvalues (-vectors) in ascending (lowest first) order != eig function
         self.lmbdas_, self.U_ = np.linalg.eigh(S)  # <-- SOLUTION
 
         # Sort eigenvalues and eigenvectors in decreasing order.
@@ -92,8 +94,10 @@ class PrincipalComponentAnalysis(BaseEstimator):
             Transformed samples in the projection space.
         """
         # BEGIN SOLUTION
+        # U matrix with eigenvectors in descending order
         B = self.U_[:, :self.n_components_]
         X = np.array(X)
+        # alternative for Z: np.matmul(B.T, (X, self.mu_))
         Z = (X - self.mu_) @ B
         return Z
         # END SOLUTION
@@ -114,8 +118,10 @@ class PrincipalComponentAnalysis(BaseEstimator):
             Re-transformed samples in the input space.
         """
         # BEGIN SOLUTION
+        # U matrix with eigenvectors in descending order
         B = self.U_[:, :self.n_components_]
         Z = np.array(Z)
+        # alternative for X: np.matmul(B, Z) + self.mu_
         X = Z @ B.T
         X += self.mu_
         return X
@@ -129,7 +135,6 @@ class PrincipalComponentAnalysis(BaseEstimator):
             # If `n_components` is an integer, the number `self.n_components_` of selected dimension will
             # be reduced from `n_features` to `n_components`.
             self.n_components_ = self.n_components  # <-- SOLUTION
-            # pass
         elif 0 < self.n_components < 1:
             # If `0 < n_components < 1`,  select the number `self.n_components_` of components such
             # that the amount of variance that needs to be explained is greater
