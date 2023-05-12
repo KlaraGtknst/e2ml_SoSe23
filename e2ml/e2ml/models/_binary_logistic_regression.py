@@ -101,7 +101,8 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
             # Compute gradient.
             # y_pred 1 dim vector -> expand dims, or index [:, None] -> 1 dim ndarry to 2 dim ndarray
             # basis function was supplied to X
-            gradient = 1 * len(X)**(-1) * np.sum((y_pred - y)[:, None] * X)
+            # we only want sum of one axis (!= whole matrix)
+            gradient = 1 * len(X)**(-1) * np.sum((y_pred - y)[:, None] * X, axis=0)
             gradient += self.lmbda * w  # regularisation term
 
             return gradient
