@@ -97,7 +97,7 @@ class PrincipalComponentAnalysis(BaseEstimator):
         # U matrix with eigenvectors in descending order
         B = self.U_[:, :self.n_components_]
         X = np.array(X)
-        # alternative for Z: np.matmul(B.T, (X, self.mu_))
+        # alternative for Z: np.matmul((X, self.mu_), B)
         Z = (X - self.mu_) @ B
         return Z
         # END SOLUTION
@@ -121,7 +121,7 @@ class PrincipalComponentAnalysis(BaseEstimator):
         # U matrix with eigenvectors in descending order
         B = self.U_[:, :self.n_components_]
         Z = np.array(Z)
-        # alternative for X: np.matmul(B, Z) + self.mu_
+        # alternative for X: np.matmul(Z, B.T) + self.mu_
         X = Z @ B.T
         X += self.mu_
         return X
