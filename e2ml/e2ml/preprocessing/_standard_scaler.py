@@ -34,9 +34,10 @@ class StandardScaler(BaseEstimator):
         X = np.array(X)
 
         # Compute `self.mu_` containing the mean value for each feature in the training set.
+        # average along data axis
         self.mu_ = np.mean(X, axis=0)  # <-- SOLUTION
 
-        # Compute `self.mu_` containing the standard deviations for each feature in the training set.
+        # Compute `self.sigma_` containing the standard deviations for each feature in the training set.
         self.sigma_ = np.std(X, axis=0)  # <-- SOLUTION
 
         return self
@@ -60,8 +61,10 @@ class StandardScaler(BaseEstimator):
 
         # Standardize data by computing `Z`.
         # BEGIN SOLUTION
+        # suppress nan error, since 9% of mnist data are nan values
         with np.errstate(all='ignore'):
             Z = (X - self.mu_) / self.sigma_
+            # function changes all nan values by default to 0
             Z = np.nan_to_num(Z, nan=0)
         # END SOLUTION
 

@@ -129,6 +129,7 @@ class PrincipalComponentAnalysis(BaseEstimator):
             # If `n_components` is an integer, the number `self.n_components_` of selected dimension will
             # be reduced from `n_features` to `n_components`.
             self.n_components_ = self.n_components  # <-- SOLUTION
+            # pass
         elif 0 < self.n_components < 1:
             # If `0 < n_components < 1`,  select the number `self.n_components_` of components such
             # that the amount of variance that needs to be explained is greater
