@@ -16,4 +16,14 @@ def one_factor_at_a_time(levels):
     X : np.ndarray of shape (n_combs, n_factors)
         Design matrix with coded levels 0 to k-1 for a k-level factor, each one at a time.
     """
-    # TODO
+    levels = np.array(levels)
+    X = np.zeros((levels.sum() + 1 - len(levels), len(levels)))
+    summed_levels = 1
+
+    for l, level in enumerate(levels):
+        for j, lev in enumerate(range(1, level)):
+            X[summed_levels+j, l] = lev
+
+        summed_levels += level-1
+
+    return X.astype(int)
