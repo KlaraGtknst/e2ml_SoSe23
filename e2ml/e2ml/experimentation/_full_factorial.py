@@ -1,6 +1,7 @@
 """
 This code implement a full factorial approach.
 """
+import itertools
 
 import numpy as np
 
@@ -50,4 +51,4 @@ def full_fac(levels):
                [ 0.,  3.,  2.],
                [ 1.,  3.,  2.]])
     """
-    # TODO 
+    return np.array(np.meshgrid(*[np.arange(0, level, 1) for level in levels])).T.reshape(-1, len(levels))

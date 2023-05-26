@@ -22,7 +22,15 @@ def van_der_corput_sequence(n_max, base=2):
     check_scalar(n_max, name="n_max", target_type=int, min_val=1)
     check_scalar(base, name="base", target_type=int, min_val=2)
 
-    # TODO 
+    sequence = []
+    for i in range(1, n_max+1):
+        n_th_number, denom = 0.0, 1.0
+        while i > 0:
+            i, remainder = divmod(i, base)
+            denom *= base
+            n_th_number += remainder / denom
+        sequence.append(n_th_number)
+    return np.array(sequence)
 
 
 def primes_from_2_to(n_max):
@@ -41,7 +49,14 @@ def primes_from_2_to(n_max):
     # Check parameters.
     check_scalar(n_max, name="n_max", target_type=int, min_val=2)
 
-    # TODO 
+    primes = list(range(2, n_max+1))
+    for i in range(2, n_max+1):
+        for j in range(2, i):
+            if i % j == 0:
+                primes.remove(i)
+                break
+    return np.array(primes)
+
 
 
 def halton_unit(n_samples, n_dimensions):
@@ -63,8 +78,16 @@ def halton_unit(n_samples, n_dimensions):
     check_scalar(n_samples, name="n_samples", target_type=int, min_val=1)
     check_scalar(n_dimensions, name="n_dimensions", target_type=int, min_val=1)
 
-    # TODO 
+    big_number = 10
+    while "Not enough prime numbers":
+        bases = primes_from_2_to(big_number)[:n_dimensions]
+        if len(bases) == n_dimensions:
+            break
+        big_number += 10
+    X = [van_der_corput_sequence(n_samples, int(base)) for base in bases]
+    X = np.stack(X, axis=-1)
 
+    return X
 
 def halton(n_samples, n_dimensions, bounds=None):
     """Generate a specified number of samples according to a Halton sequence in a user-specified hypercube.
@@ -95,4 +118,9 @@ def halton(n_samples, n_dimensions, bounds=None):
         bounds = np.zeros((n_dimensions, 2))
         bounds[:, 1] = 1
 
-    # TODO 
+    X = halton_unit(n_samples, n_dimensions)
+
+    a = bounds[:, 0]
+    b = bounds[:, 1]
+    X = X * (b - a) + a
+    return X
