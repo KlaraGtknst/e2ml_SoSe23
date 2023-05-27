@@ -3,6 +3,7 @@ This code provides the implementation for the latin hypercube.
 """
 
 import numpy as np
+import random
 
 from sklearn.utils import check_scalar, check_array
 
@@ -25,7 +26,26 @@ def lat_hyp_cube_unit(n_samples, n_dimensions):
     X : np.ndarray of shape (n_samples, n_dimensions)
         An `n_samples-by-n_dimensions` design matrix whose levels are spaced between zero and one.
     """
-    # TODO 
+    # grid of size n_samples = 200 OR just chose 200 random grids
+    positions = np.linspace(0, 1, n_samples, endpoint=False, dtype=float)
+    grid = np.array(np.meshgrid(*[positions for level in range(n_dimensions)])).T.reshape(-1, n_dimensions)
+
+    # sequence of 200x 2-dim values
+    sequence = []
+
+    # choose random grids
+    grids_selected = random.choices(grid, k=n_samples)
+
+    # generate random number within interval
+    interval_size = float(1/n_samples)
+    for i in range(n_samples):
+        sample = []
+        for dim in range(n_dimensions):
+            rand_grid_val = random.uniform(grids_selected[i][dim], grids_selected[i][dim] + interval_size)
+            sample.append(rand_grid_val)
+        sequence.append(sample)
+
+    return np.array(sequence)
 
 
 def lat_hyp_cube(n_samples, n_dimensions, bounds=None):
@@ -57,4 +77,10 @@ def lat_hyp_cube(n_samples, n_dimensions, bounds=None):
         bounds = np.zeros((n_dimensions, 2))
         bounds[:, 1] = 1
 
-    # TODO 
+    X = lat_hyp_cube_unit(n_samples, n_dimensions)
+
+    a = bounds[:, 0]
+    b = bounds[:, 1]
+    X = X * (b - a) + a
+
+    return X
