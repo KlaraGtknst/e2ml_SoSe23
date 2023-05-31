@@ -59,10 +59,10 @@ class GaussianProcessRegression(BaseEstimator, RegressorMixin):
 
         # Compute matrix `C_N` using the function `pairwise_kernels` with
         # `self.metric_dict_` as its parameters.
-        # TODO 
+        C_N = pairwise_kernels(self.metric_dict_)
 
         # Compute inverse `self.C_N_inv_` of matrix `C_N`.
-        # TODO 
+        self.C_N_inv_ = np.linalg.inv(C_N)
 
         return self
 
@@ -87,14 +87,14 @@ class GaussianProcessRegression(BaseEstimator, RegressorMixin):
 
         # Compute Gram matrix `K` between `X` and `self.X_` using the function
         # `pairwise_kernels` with `self.metric_dict_` as its parameters.
-        # TODO 
+        K = pairwise_kernels(X, self.X_, self.metrics_dict_)
 
         # Compute mean predictions `means` for samples `X`.
-        # TODO 
+        means = np.ndarray(np.mean(K, axis=0))  # 0 == column
 
         if return_std:
             # Compute standard deviations `stds` for predicted means.
-            # TODO 
+            stds = np.std(means)
             return means, stds
         else:
             return means
