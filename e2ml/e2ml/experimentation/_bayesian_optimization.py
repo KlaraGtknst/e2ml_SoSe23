@@ -142,7 +142,25 @@ def perform_bayesian_optimization(X_cand, gpr, acquisition_func, obj_func, n_eva
     X_acquired = []
     y_acquired = []
     for i in range(n_evals):
-        # TODO
-        print('help')
+        # select x_N+1 at maximum of acquisition function
+        x_N_plus_1 = 0
+        if acquisition_func == 'pi':
+            x_N_plus_1 = np.argmax(acquisition_pi(gpr.predict(X_cand, True), tau=0))
+        elif acquisition_func == 'ei':
+            x_N_plus_1 = np.argmax(acquisition_ei(gpr.predict(X_cand, True), tau=0))
+        elif acquisition_func == 'ucb':
+            x_N_plus_1 = np.argmax(acquisition_ucb(gpr.predict(X_cand, True), kappa=1))
+        X_cand = x_N_plus_1
+
+        # evaluate objective function at x_N+1 to obtain y_N+1
+        y_N_plus_1 = obj_func(X_cand)
+
+        # add new sample to 'old' data
+        X_acquired.append(x_N_plus_1)
+        y_acquired.append(y_N_plus_1)
+
+        # update statistical model
+        gpr.fit(X_acquired, y_acquired)
+
 
 
