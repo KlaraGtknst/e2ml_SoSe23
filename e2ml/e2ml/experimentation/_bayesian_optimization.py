@@ -32,7 +32,8 @@ def acquisition_pi(mu, sigma, tau):
     check_consistent_length(mu, sigma)
 
     # Compute and return probability improvement as `pi_scores`.
-    pi_scores = norm.cdf((mu-tau)/sigma)
+    z = (mu-tau)/sigma
+    pi_scores = norm.cdf(z)
     return pi_scores
 
 
@@ -61,7 +62,10 @@ def acquisition_ei(mu, sigma, tau):
     check_consistent_length(mu, sigma)
 
     # Compute and return probability improvement as `ei_scores`.
-    ei_scores = (mu - tau) * norm.cdf((mu-tau)/sigma) + sigma * norm.pdf((mu-tau)/sigma)
+    z = (mu-tau)/sigma
+    term1 = (mu - tau) * norm.cdf(z)
+    term2 = sigma * norm.pdf(z)
+    ei_scores = term1 + term2
     return ei_scores
 
 
