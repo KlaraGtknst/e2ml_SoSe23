@@ -59,10 +59,12 @@ class GaussianProcessRegression(BaseEstimator, RegressorMixin):
 
         # Compute matrix `C_N` using the function `pairwise_kernels` with
         # `self.metric_dict_` as its parameters.
-        C_N = pairwise_kernels(self.metric_dict_)
+        # kernel matrix K
+        K = pairwise_kernels(self.X_, **self.metrics_dict_)
+        C_N = K + self.beta * np.eye(len(K))
 
         # Compute inverse `self.C_N_inv_` of matrix `C_N`.
-        self.C_N_inv_ = np.linalg.inv(C_N)
+        self.C_N_inv_ = np.linalg.inv(C_N)  # pinv pseudo inverse = approximation of inv
 
         return self
 
@@ -87,14 +89,18 @@ class GaussianProcessRegression(BaseEstimator, RegressorMixin):
 
         # Compute Gram matrix `K` between `X` and `self.X_` using the function
         # `pairwise_kernels` with `self.metric_dict_` as its parameters.
-        K = pairwise_kernels(X, self.X_, self.metrics_dict_)
+        # computes vector k from Folie 37
+        K = pairwise_kernels(X, self.X_, **self.metrics_dict_)  # |X| by #predictions return matrix
 
-        # Compute mean predictions `means` for samples `X`.
-        means = np.ndarray(np.mean(K, axis=0))  # 0 == column
+        # Compute mean predictions `means` for samples `X`. Folie 37
+        means = K @ self.C_N_inv_ @ self.y_
 
         if return_std:
             # Compute standard deviations `stds` for predicted means.
-            stds = np.std(means)
+            c = np.diag(pairwise_kernels(X, **self.metrics_dict_)) #+ 1/self.beta
+            # we only care about entries of c -> only look about diagonal
+            # -> interested in variance of entries with themselves
+            stds = np.sqrt(c - np.diag(K @ self.C_N_inv_ @ K.T))  # returns vector
             return means, stds
         else:
             return means
