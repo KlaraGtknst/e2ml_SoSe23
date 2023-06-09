@@ -2,7 +2,7 @@ import numpy as np
 
 from sklearn.utils.validation import check_consistent_length, check_scalar, column_or_1d
 
-from . import zero_one_loss
+from notebooks.evaluation import zero_one_loss
 
 
 def confusion_matrix(y_true, y_pred, *, n_classes=None, normalize=None):
@@ -18,7 +18,7 @@ def confusion_matrix(y_true, y_pred, *, n_classes=None, normalize=None):
     y_pred : array-like of shape (n_samples,)
         Estimated targets as returned by a classifier. Expected to be in the set `{0, ..., n_classes-1}`.
     n_classes : int
-        Number of classes. If `n_classes=None`, the number of classes is assumed to be the maximum value of `y_ture`
+        Number of classes. If `n_classes=None`, the number of classes is assumed to be the maximum value of `y_true`
         and `y_pred`.
     normalize : {'true', 'pred', 'all'}, default=None
         Normalizes confusion matrix over the true (rows), predicted (columns) conditions or all the population. If None,
@@ -27,10 +27,45 @@ def confusion_matrix(y_true, y_pred, *, n_classes=None, normalize=None):
     Returns
     -------
     C : np.ndarray of shape (n_classes, n_classes)
-        Confusion matrix whose i-th row and j-th column entry indicates the number of amples with true label being
+        Confusion matrix whose i-th row and j-th column entry indicates the number of samples with true label being
         i-th class and predicted label being j-th class.
     """
-    # TODO 
+    if len([filter(lambda x: x < 0, set(y_true + y_pred))]) > 0:
+        raise ValueError('Classes should be 0 or bigger')
+
+    # create empty matrix
+    n_classes = n_classes if n_classes is not None else max(*y_true, *y_pred) + 1
+    C = np.zeros((n_classes, n_classes), dtype=int)
+    print(C)
+    print(y_true)
+
+    # c_i,j = true label i, predicted label j
+    for i in range(len(y_true)):
+        real_class = y_true[i]
+        pred_class = y_pred[i]
+        C[real_class, pred_class] += 1
+
+    # normalize
+    if normalize == 'true':
+        # sum(row) == 1
+        for row in C:
+            for cell in range(len(row)):
+                row[cell] = float(row[cell]/sum(row))
+
+    elif normalize == 'pred':
+        # sum(column) == 1
+        for col in C.T:
+            for cell in range(len(col)):
+                col[cell] = float(col[cell]/sum(col))
+
+    elif normalize == 'all':
+        # sum(matrix ) == 1
+        for row in C:
+            for cell in range(len(row)):
+                row[cell] = float(row[cell]/np.sum(C))
+
+    return C
+
 
 
 def accuracy(y_true, y_pred):
@@ -48,7 +83,8 @@ def accuracy(y_true, y_pred):
     acc : float in [0, 1]
         Accuracy.
     """
-    # TODO 
+    C = confusion_matrix(y_true, y_pred, normalize=None)
+    return np.trace(C)/np.sum(C)
 
 
 def cohen_kappa(y_true, y_pred, n_classes=None):
@@ -109,4 +145,22 @@ def macro_f1_measure(y_true, y_pred, n_classes=None):
     macro_f1 : float in [0, 1]
         The marco f1 measure between 0 and 1.
     """
-    # TODO 
+    C = confusion_matrix(y_true=y_true, y_pred=y_pred, n_classes=n_classes)
+    n_classes = len(C)
+    f1_classes = np.zeros_like(n_classes)
+
+    for c in range(n_classes):
+        if not any(np.isnan(y_true)) and not any(np.isnan(y_pred)):
+            true_positives = C[c, c]
+            false_positives = sum(C[:,c]) - true_positives
+            false_negative = sum(C[c]) - true_positives
+
+            # percision: TP/ (TP + FP)
+            prec = true_positives / (true_positives + false_positives)
+
+            # recall: TP / (TP + FN)
+            recall = true_positives / (true_positives + false_negative)
+
+            f1_classes[c] = (2* np.cross(prec, recall))/ (prec + recall)
+
+    return np.average(f1_classes)
