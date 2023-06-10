@@ -1,7 +1,5 @@
 import numpy as np
-
 from sklearn.utils.validation import check_consistent_length, check_scalar, column_or_1d
-
 from . import zero_one_loss
 
 
@@ -91,9 +89,6 @@ def accuracy(y_true, y_pred):
     y_true = column_or_1d(y_true, int).astype(int)
     y_pred = column_or_1d(y_pred, int).astype(int)
 
-    y_max = np.max((y_true.max(), y_pred.max()))
-    n_classes = y_max + 1
-
     C = confusion_matrix(y_true, y_pred, normalize=None)
 
     # alternative
@@ -164,20 +159,6 @@ def macro_f1_measure(y_true, y_pred, n_classes=None):
     f1_classes = np.zeros(n_classes)
 
     for c in range(n_classes):
-        # error
-        '''if not any(np.isnan(y_true)) and not any(np.isnan(y_pred)):
-            true_positives = C[c, c]
-            false_positives = np.sum(C[:,c]) - true_positives
-            false_negative = np.sum(C[c]) - true_positives
-
-            # percision: TP/ (TP + FP)
-            prec = true_positives / (true_positives + false_positives)
-
-            # recall: TP / (TP + FN) = sensitivity, FN = should be positive but is assigned negative
-            recall = true_positives / (true_positives + false_negative)
-
-            f1_classes[c] = (2 * np.cross(prec, recall))/ (prec + recall)'''
-
         if C[c, :].sum() == 0 and C[:, c].sum() == 0:
             f1_classes[c] = 0.0
         else:
