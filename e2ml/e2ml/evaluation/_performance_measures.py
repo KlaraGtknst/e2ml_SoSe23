@@ -99,10 +99,6 @@ def accuracy(y_true, y_pred):
     # alternative
     #return 1 - zero_one_loss(y_true=y_true, y_pred=y_pred)
 
-    #num = 0
-    #dem = 0
-
-    #for i in range()
     return np.trace(C)/np.sum(C)
 
 
@@ -142,7 +138,6 @@ def cohen_kappa(y_true, y_pred, n_classes=None):
     kappa = 1 - np.sum(w_mat * C) / np.sum(w_mat * expected)
     return kappa
 
-#TODO
 def macro_f1_measure(y_true, y_pred, n_classes=None):
     """Computes the marco F1 measure.
 
@@ -166,13 +161,14 @@ def macro_f1_measure(y_true, y_pred, n_classes=None):
     """
     C = confusion_matrix(y_true=y_true, y_pred=y_pred, n_classes=n_classes)
     n_classes = len(C)
-    f1_classes = np.zeros_like(n_classes)
+    f1_classes = np.zeros(n_classes)
 
     for c in range(n_classes):
-        if not any(np.isnan(y_true)) and not any(np.isnan(y_pred)):
+        # error
+        '''if not any(np.isnan(y_true)) and not any(np.isnan(y_pred)):
             true_positives = C[c, c]
-            false_positives = sum(C[:,c]) - true_positives
-            false_negative = sum(C[c]) - true_positives
+            false_positives = np.sum(C[:,c]) - true_positives
+            false_negative = np.sum(C[c]) - true_positives
 
             # percision: TP/ (TP + FP)
             prec = true_positives / (true_positives + false_positives)
@@ -180,6 +176,11 @@ def macro_f1_measure(y_true, y_pred, n_classes=None):
             # recall: TP / (TP + FN) = sensitivity, FN = should be positive but is assigned negative
             recall = true_positives / (true_positives + false_negative)
 
-            f1_classes[c] = (2* np.cross(prec, recall))/ (prec + recall)
+            f1_classes[c] = (2 * np.cross(prec, recall))/ (prec + recall)'''
 
-    return np.average(f1_classes)
+        if C[c, :].sum() == 0 and C[:, c].sum() == 0:
+            f1_classes[c] = 0.0
+        else:
+            f1_classes[c] = 2 * C[c, c] / (C[c, :].sum() + C[:, c].sum())
+
+    return np.mean(f1_classes)
