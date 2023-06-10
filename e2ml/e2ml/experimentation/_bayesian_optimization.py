@@ -143,28 +143,43 @@ def perform_bayesian_optimization(X_cand, gpr, acquisition_func, obj_func, n_eva
     )
 
     # Perform Bayesian optimization until `n_evals` have been performed.
+    X_cand_is_acquired = np.zeros(len(X_cand), dtype=bool)
     X_acquired = []
     y_acquired = []
-    for i in range(n_evals):
-        # select x_N+1 at maximum of acquisition function
-        x_N_plus_1 = 0
-        if acquisition_func == 'pi':
-            x_N_plus_1 = np.argmax(acquisition_pi(gpr.predict(X_cand, True), tau=0))
-        elif acquisition_func == 'ei':
-            x_N_plus_1 = np.argmax(acquisition_ei(gpr.predict(X_cand, True), tau=0))
-        elif acquisition_func == 'ucb':
-            x_N_plus_1 = np.argmax(acquisition_ucb(gpr.predict(X_cand, True), kappa=1))
-        X_cand = x_N_plus_1
 
-        # evaluate objective function at x_N+1 to obtain y_N+1
-        y_N_plus_1 = obj_func(X_cand)
+    # n_rand_init
+    random_selected_idx = np.random.RandomState(1).choice(len(X_cand), size=n_random_init)
+    X_cand_is_acquired[random_selected_idx] = True  # index is acquired
+    [X_acquired.append(X_cand[idx_]) for idx_ in random_selected_idx]
+    [y_acquired.append(obj_func(X_cand[idx_])) for idx_ in random_selected_idx]
 
-        # add new sample to 'old' data
-        X_acquired.append(x_N_plus_1)
-        y_acquired.append(y_N_plus_1)
-
-        # update statistical model
+    # n_evals (assumption n_evals > n_random_init)
+    for i in range(n_random_init, n_evals):
+        # fit gpr
         gpr.fit(X_acquired, y_acquired)
 
+        # predict
+        mu, sigma = gpr.predict(X_cand[~X_cand_is_acquired], return_std=True) # ~ inverted
+
+        # compute tau
+        tau = np.max(y_acquired)
+
+        # evaluate acquisition function
+        if acquisition_func == 'pi':
+            scores = acquisition_pi(mu=mu, sigma=sigma, tau=tau)
+        elif acquisition_func == 'ei':
+            scores = acquisition_ei(mu=mu, sigma=sigma, tau=tau)
+        elif acquisition_func == 'ucb':
+            scores = acquisition_ucb(mu=mu, sigma=sigma, kappa=1.0)
+
+        # find candidates according to acquisition score
+        acq_func_selected_idx = np.argmax(scores)
+
+        # append list
+        X_cand_is_acquired[acq_func_selected_idx] = True  # index is acquired
+        X_acquired.append(X_cand[acq_func_selected_idx])
+        y_acquired.append(obj_func(X_cand[acq_func_selected_idx]))
+
+    return np.array(X_acquired), np.array(y_acquired)
 
 
