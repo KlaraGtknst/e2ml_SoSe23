@@ -115,6 +115,10 @@ def draw_lift_chart(true_labels, pos, predicted):
 
 
     # Mareks Code
+    plt.figure(figsize=(10, 6))
+    plt.title('Lift Chart')
+    plt.xlabel('Sample size')
+    plt.ylabel('True positives')
     n = len(true_labels)    # number of samples
 
     # store sample index and true labels
