@@ -24,7 +24,7 @@ setuptools.setup(
     install_requires=[
         'numpy~=1.20.1',
         'scipy~=1.6.1',
-        'scikit-learn~=0.24.1',
+        'scikit-learn~=1.2.0',
         'matplotlib~=3.3.4',
         'iteration-utilities~=0.11.0',
         'jupyter~=1.0.0',
