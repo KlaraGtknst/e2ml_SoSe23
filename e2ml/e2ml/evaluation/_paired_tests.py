@@ -34,7 +34,10 @@ def t_test_paired(sample_data_1, sample_data_2=None, mu_0=0, test_type="two-side
     if sample_data_2 is not None:
         sample_data_2 = check_array(sample_data_2, ensure_2d=False)
 
-    # TODO 
+    # TODO
+    # test statistic: mean of difference of sample, expected value: 0, bc they ought to be equally distributed
+    sample_data_diff = sample_data_1 if sample_data_2 is None else sample_data_1 - sample_data_2
+    return t_test_one_sample(sample_data_diff, mu_0=mu_0, test_type=test_type)
 
 
 def wilcoxon_signed_rank_test(sample_data_1, sample_data_2=None, test_type="two-sided"):
