@@ -29,8 +29,8 @@ def confusion_matrix(y_true, y_pred, *, n_classes=None, normalize=None):
         i-th class and predicted label being j-th class.
     """
     # create empty matrix
-    y_true = column_or_1d(y_true, int).astype(int)
-    y_pred = column_or_1d(y_pred, int).astype(int)
+    y_true = column_or_1d(y_true).astype(int)
+    y_pred = column_or_1d(y_pred).astype(int)
 
     check_consistent_length(y_true, y_pred)
     #[check_scalar(y, target_type=np.dtype(int), name='y_true') for y in y_true]
@@ -86,8 +86,8 @@ def accuracy(y_true, y_pred):
         Accuracy.
     """
 
-    y_true = column_or_1d(y_true, int).astype(int)
-    y_pred = column_or_1d(y_pred, int).astype(int)
+    y_true = column_or_1d(y_true).astype(int)
+    y_pred = column_or_1d(y_pred).astype(int)
 
     C = confusion_matrix(y_true, y_pred, normalize=None)
 
