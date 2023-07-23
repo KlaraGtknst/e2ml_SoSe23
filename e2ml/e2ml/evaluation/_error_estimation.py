@@ -51,7 +51,7 @@ def cross_validation(sample_indices, n_folds=5, random_state=None, y=None):
 
     # fold befüllen
     # stratified k-fold cross-validation: samples are drawn in a way that preserves the percentage of samples for each class
-    # -> performace measure auf Test Daten repränsentiert die gesamte performance des Modells
+    # -> performance measure auf Test Daten repränsentiert die gesamte performance des Modells
     # -> auf repräsentativen Daten trainieren
 
     # wir haben schon permuted -> y splitten nach Klasse und Anteil pro Klasse in fold einfügen

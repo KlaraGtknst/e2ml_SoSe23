@@ -55,6 +55,6 @@ def binary_cross_entropy_loss(y_true, y_pred):
     # Compute and return the empirical risk.
     # x times logs y computation, stops if x == 0
     risk = (-xlogy(y_true, y_pred) - xlogy(1-y_true, 1-y_pred)).mean()
-    # smallest possible float (epsilon) to increment used to differentiate if floating point values for alternarive
+    # smallest possible float (epsilon) to increment used to differentiate if floating point values for alternative
 
     return risk

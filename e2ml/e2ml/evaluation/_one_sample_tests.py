@@ -90,7 +90,7 @@ def t_test_one_sample(sample_data, mu_0, test_type="two-sided"):
     empirical_mean = np.mean(sample_data)
 
     # empirical standard deviation
-    # ddof=1: Delta degrees of freedom. The divisor used in calculations is N - ddof, where N represents the number of elements.-> N-1 = ddf
+    # ddof=1: Delta degrees of freedom. The divisor used in calculations is N - ddof, where N represents the number of elements.-> N-1 = ddof
     empirical_sigma = np.std(sample_data, ddof=1)
 
     # sample size

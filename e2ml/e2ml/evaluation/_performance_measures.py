@@ -159,9 +159,19 @@ def macro_f1_measure(y_true, y_pred, n_classes=None):
     f1_classes = np.zeros(n_classes)
 
     for c in range(n_classes):
+        with np.errstate(all="ignore"):
+            tp_c = C[c, c]  # true positives
+            fp_c = C[:, c].sum() - C[c, c]  # false positives
+            fn_c = C[c, :].sum() - C[c, c]  # false negatives
+            prec_c = tp_c / (tp_c + fp_c)   # precision
+            rec_c = tp_c / (tp_c + fn_c)    # recall
+            f1_c = (2 * prec_c * rec_c) / (prec_c + rec_c)
+            f1_classes[c] = np.nan_to_num(f1_c)
+
+    '''for c in range(n_classes):
         if C[c, :].sum() == 0 and C[:, c].sum() == 0:
             f1_classes[c] = 0.0
         else:
-            f1_classes[c] = 2 * C[c, c] / (C[c, :].sum() + C[:, c].sum())
+            f1_classes[c] = 2 * C[c, c] / (C[c, :].sum() + C[:, c].sum())   # ungenau, s. Loesung oben'''
 
     return np.mean(f1_classes)
