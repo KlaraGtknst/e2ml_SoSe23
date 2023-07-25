@@ -120,7 +120,7 @@ def halton(n_samples, n_dimensions, bounds=None):
 
     X = halton_unit(n_samples, n_dimensions)
 
-    a = bounds[:, 0]
-    b = bounds[:, 1]
-    X = X * (b - a) + a
+    x_min = bounds[:, 0]
+    x_max = bounds[:, 1]
+    X = X * (x_max - x_min) + x_min
     return X

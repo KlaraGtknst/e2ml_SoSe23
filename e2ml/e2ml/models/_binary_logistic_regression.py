@@ -155,7 +155,7 @@ class BinaryLogisticRegression(BaseEstimator, ClassifierMixin):
         """
         # Predict class labels `y`.
         proba = self.predict_proba(X)   # matrix with individual class probabilities for 0 and 1
-        y = proba.argmax(axis=1)        # return index/class with highest value for every row
+        y = proba.argmax(axis=1)        # return index/class with the highest value for every row
 
         # Re-transform predicted labels using `self.label_encoder_`.
         y = self.label_encoder_.inverse_transform(y)
