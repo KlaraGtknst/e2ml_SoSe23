@@ -58,14 +58,30 @@ jupyter-notebook
 ```
 ## Experimentation
 
-This folder contains files about bayesian optimization, data generation including full factorial, halton, latin hypercube
-and one factor at the time.
-Hence, different DoE techniques, including factorial design and random design, are presented.
+This folder contains files about 
+- bayesian optimization
+- data generation including 
+  - full factorial
+  - halton
+  - latin hypercube 
+- one factor at the time.
+
+Hence, different DoE techniques, including 
+- factorial design
+- random design
+
+are presented.
 
 ## Evaluation
 
-Evaluation methods, such as error estimation techniques using loss functions and different statistical tests to account
-for the statistical relevance of the result, as well as presentation in form of visualizations are content of this folder.
+Evaluation methods, such as 
+- error estimation techniques using 
+  - loss functions and 
+  - different statistical tests to account
+  for the statistical relevance of the result 
+- presentation in form of visualizations 
+
+are content of this folder.
 
 ## Results
 
